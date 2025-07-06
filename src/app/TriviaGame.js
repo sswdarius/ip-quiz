@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const questions = [
@@ -110,32 +110,34 @@ export default function TriviaGame() {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (!started || showResult) return;
-    setTimeLeft(40);
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev === 1) {
-          clearInterval(timerRef.current);
-          handleAnswer(false);
-          return 40;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timerRef.current);
-  }, [current, showResult, started]);
+  if (!started || showResult) return;
 
-  const handleAnswer = (answer) => {
-    clearInterval(timerRef.current);
-    const question = shuffled[current];
-    if (!question) return;
-    const correct = question.isTrue === answer;
-    if (correct) setScore(s => s + 1);
-    setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
-    const next = current + 1;
-    if (next < shuffled.length) setCurrent(next);
-    else setShowResult(true);
-  };
+  setTimeLeft(15);
+  timerRef.current = setInterval(() => {
+    setTimeLeft(prev => {
+      if (prev === 1) {
+        clearInterval(timerRef.current);
+        handleAnswer(false);
+        return 15;
+      }
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timerRef.current);
+}, [current, showResult, started, handleAnswer]);
+
+  const handleAnswer = useCallback((answer) => {
+  clearInterval(timerRef.current);
+  const question = shuffled[current];
+  if (!question) return;
+  const correct = question.isTrue === answer;
+  if (correct) setScore(s => s + 1);
+  setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
+  const next = current + 1;
+  if (next < shuffled.length) setCurrent(next);
+  else setShowResult(true);
+}, [current, shuffled]);
 
   const startGame = () => {
     setShuffled([...questions].sort(() => Math.random() - 0.5));
