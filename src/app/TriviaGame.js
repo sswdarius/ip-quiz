@@ -155,10 +155,11 @@ export default function TriviaGame() {
     setAnswering(false);
   };
 
-  const baseUrl = 'https://ip-quiz.vercel.app';
-const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the Quick IP Quiz! My title: ${getTitle(score)}. Can you beat me?`;
-const shareUrl = `${baseUrl}/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
+  const baseUrl = 'https://ip-quiz.vercel.app'; // sonu /
+const path = 'api/og'; // başında / yok
+const shareUrl = `${baseUrl}/${path}?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
 const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+
 
 
   return (
