@@ -109,38 +109,48 @@ export default function TriviaGame() {
   const [shuffled, setShuffled] = useState([]);
   const timerRef = useRef(null);
 
-  
-const handleAnswer = useCallback((answer) => {
-  clearInterval(timerRef.current);
-  const question = shuffled[current];
-  if (!question) return;
-  const correct = question.isTrue === answer;
-  if (correct) setScore(s => s + 1);
-  setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
-  const next = current + 1;
-  if (next < shuffled.length) setCurrent(next);
-  else setShowResult(true);
-}, [current, shuffled]);
+  // Yeni flag eklendi: cevap verildi mi kontrolü için
+  const answerGivenRef = useRef(false);
 
+  const handleAnswer = useCallback((answer) => {
+    if (answerGivenRef.current) return; // Eğer zaten cevap verildiyse, işlemi iptal et
 
-useEffect(() => {
-  if (!started || showResult) return;
+    answerGivenRef.current = true;      // Cevap verildiğini işaretle
+    clearInterval(timerRef.current);
+    timerRef.current = null;
 
-  setTimeLeft(30);
-  timerRef.current = setInterval(() => {
-    setTimeLeft(prev => {
-      if (prev === 1) {
-        clearInterval(timerRef.current);
-        handleAnswer(false);
-        return 30;
-      }
-      return prev - 1;
-    });
-  }, 1000);
+    const question = shuffled[current];
+    if (!question) return;
 
-  return () => clearInterval(timerRef.current);
-}, [current, showResult, started, handleAnswer]);
+    const correct = question.isTrue === answer;
+    if (correct) setScore(s => s + 1);
+    setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
+    const next = current + 1;
+    if (next < shuffled.length) setCurrent(next);
+    else setShowResult(true);
+  }, [current, shuffled]);
 
+  useEffect(() => {
+    if (!started || showResult) return;
+
+    // Yeni soruya geçildiğinde cevap verildi flagini sıfırla
+    answerGivenRef.current = false;
+
+    setTimeLeft(30);
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev === 1) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+          handleAnswer(false); // Süre bittiğinde otomatik yanlış cevap
+          return 30;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timerRef.current);
+  }, [current, showResult, started, handleAnswer]);
 
   const startGame = () => {
     setShuffled([...questions].sort(() => Math.random() - 0.5));
