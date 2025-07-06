@@ -155,9 +155,11 @@ export default function TriviaGame() {
     setAnswering(false);
   };
 
-  const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the Quick IP Quiz! My title: ${getTitle(score)}. Can you beat me?`;
-  const shareUrl = `https://ip-quiz.vercel.app/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
-  const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+  const baseUrl = 'https://ip-quiz.vercel.app';
+const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the Quick IP Quiz! My title: ${getTitle(score)}. Can you beat me?`;
+const shareUrl = `${baseUrl}/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
+const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-purple-700 via-indigo-700 to-blue-700 p-6">
