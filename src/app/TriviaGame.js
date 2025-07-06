@@ -29,7 +29,7 @@ const questions = [
     prompt: "A man sued Apple claiming the Apple logo matched his 1970s fruit sketch.",
     isTrue: true,
     explanation: "Apple faced such logo lawsuits early on.",
-    source: "https://www.copyright.gov/docs/apple-v-fruit.html" // Güncellenmiş örnek bir Apple logo davası benzeri
+    source: "https://www.copyright.gov/docs/apple-v-fruit.html"
   },
   {
     prompt: "J.K. Rowling sued a fan fiction author for plagiarizing Harry Potter characters.",
@@ -109,13 +109,13 @@ export default function TriviaGame() {
   const [shuffled, setShuffled] = useState([]);
   const timerRef = useRef(null);
 
-  // Yeni flag eklendi: cevap verildi mi kontrolü için
+  // Cevap verildi mi kontrolü için ref
   const answerGivenRef = useRef(false);
 
   const handleAnswer = useCallback((answer) => {
-    if (answerGivenRef.current) return; // Eğer zaten cevap verildiyse, işlemi iptal et
+    if (answerGivenRef.current) return; // Aynı soruya tekrar cevap verilmesini engelle
 
-    answerGivenRef.current = true;      // Cevap verildiğini işaretle
+    answerGivenRef.current = true; // Cevap verildi olarak işaretle
     clearInterval(timerRef.current);
     timerRef.current = null;
 
@@ -125,6 +125,7 @@ export default function TriviaGame() {
     const correct = question.isTrue === answer;
     if (correct) setScore(s => s + 1);
     setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
+
     const next = current + 1;
     if (next < shuffled.length) setCurrent(next);
     else setShowResult(true);
@@ -133,7 +134,7 @@ export default function TriviaGame() {
   useEffect(() => {
     if (!started || showResult) return;
 
-    // Yeni soruya geçildiğinde cevap verildi flagini sıfırla
+    // Yeni soruya geçildiğinde flag sıfırlanır
     answerGivenRef.current = false;
 
     setTimeLeft(30);
@@ -142,7 +143,7 @@ export default function TriviaGame() {
         if (prev === 1) {
           clearInterval(timerRef.current);
           timerRef.current = null;
-          handleAnswer(false); // Süre bittiğinde otomatik yanlış cevap
+          handleAnswer(false); // Süre bitince otomatik yanlış cevap ver
           return 30;
         }
         return prev - 1;
