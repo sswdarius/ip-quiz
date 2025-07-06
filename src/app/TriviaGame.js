@@ -109,7 +109,21 @@ export default function TriviaGame() {
   const [shuffled, setShuffled] = useState([]);
   const timerRef = useRef(null);
 
-  useEffect(() => {
+  
+const handleAnswer = useCallback((answer) => {
+  clearInterval(timerRef.current);
+  const question = shuffled[current];
+  if (!question) return;
+  const correct = question.isTrue === answer;
+  if (correct) setScore(s => s + 1);
+  setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
+  const next = current + 1;
+  if (next < shuffled.length) setCurrent(next);
+  else setShowResult(true);
+}, [current, shuffled]);
+
+
+useEffect(() => {
   if (!started || showResult) return;
 
   setTimeLeft(30);
@@ -127,17 +141,6 @@ export default function TriviaGame() {
   return () => clearInterval(timerRef.current);
 }, [current, showResult, started, handleAnswer]);
 
-  const handleAnswer = useCallback((answer) => {
-  clearInterval(timerRef.current);
-  const question = shuffled[current];
-  if (!question) return;
-  const correct = question.isTrue === answer;
-  if (correct) setScore(s => s + 1);
-  setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
-  const next = current + 1;
-  if (next < shuffled.length) setCurrent(next);
-  else setShowResult(true);
-}, [current, shuffled]);
 
   const startGame = () => {
     setShuffled([...questions].sort(() => Math.random() - 0.5));
@@ -148,7 +151,7 @@ export default function TriviaGame() {
     setShowResult(false);
   };
 
-  const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the IP Lawsuit Trivia! My title: ${getTitle(score)}. Can you beat me?`;
+  const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the Quick IP Quiz! My title: ${getTitle(score)}. Can you beat me?`;
   const shareUrl = `https://story-ip-quiz.vercel.app/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
   const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
 
@@ -180,7 +183,7 @@ export default function TriviaGame() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
             >
-              <h1 className="text-3xl font-extrabold mb-4 text-gray-900 tracking-tight">IP Lawsuit Trivia</h1>
+              <h1 className="text-3xl font-extrabold mb-4 text-gray-900 tracking-tight">Quick IP Quiz</h1>
               <p className="text-lg mb-6 text-gray-700 max-w-lg mx-auto">{shuffled[current].prompt}</p>
               <div className="flex justify-center space-x-6 mb-6">
                 <motion.button
