@@ -148,7 +148,7 @@ export default function TriviaGame() {
 };
 
   const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the Quick IP Quiz! My title: ${getTitle(score)}. Can you beat me?`;
-  const shareUrl = `http://localhost:3000/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
+  const shareUrl = `https://ip-quiz.vercel.app//api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
   const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
 
   return (
