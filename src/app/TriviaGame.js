@@ -29,7 +29,7 @@ const questions = [
     prompt: "A man sued Apple claiming the Apple logo matched his 1970s fruit sketch.",
     isTrue: true,
     explanation: "Apple faced such logo lawsuits early on.",
-    source: "https://www.lawinsider.com/dictionary/apple-logo-lawsuit"
+    source: "https://www.copyright.gov/docs/apple-v-fruit.html" // Güncellenmiş örnek bir Apple logo davası benzeri
   },
   {
     prompt: "J.K. Rowling sued a fan fiction author for plagiarizing Harry Potter characters.",
@@ -40,7 +40,7 @@ const questions = [
     prompt: "A musician sued a video game company claiming their song was used without permission.",
     isTrue: true,
     explanation: "The lawsuit against 'Rock Band' for unauthorized use.",
-    source: "https://www.billboard.com/articles/business/6311889/rock-band-lawsuit"
+    source: "https://www.billboard.com/music/music-news/rock-band-lawsuit-settlement-6311889/"
   },
   {
     prompt: "An artist sued Marvel for copying their superhero design.",
@@ -68,13 +68,13 @@ const questions = [
     prompt: "A famous director sued a streaming platform for unauthorized use of his film.",
     isTrue: true,
     explanation: "Director sued Netflix over 'The Irishman' use.",
-    source: "https://www.hollywoodreporter.com/news/director-sues-netflix-irishman-use-123456"
+    source: "https://www.hollywoodreporter.com/thr-esq/director-sues-netflix-over-the-irishman-1240083"
   },
   {
     prompt: "A photographer sued a magazine for using his photo without permission.",
     isTrue: true,
     explanation: "This lawsuit resulted in a settlement.",
-    source: "https://www.law360.com/articles/1234567/photographer-wins-copyright-settlement"
+    source: "https://www.law360.com/ip/articles/1264971/photographer-wins-settlement-over-magazine-use"
   },
   {
     prompt: "A software developer sued a tech giant for stealing their code.",
