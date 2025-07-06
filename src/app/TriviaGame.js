@@ -247,9 +247,9 @@ const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURICompo
         )}
       </div>
 
-      <div
+    <div
   className="mt-6 text-center text-sm text-gray-600 cursor-pointer hover:text-blue-600 transition select-none"
   onClick={() => window.open('https://x.com/abigrafikvarmi', '_blank')}
 >
-  dsad
+  {nickname || 'dsad'}
 </div>
