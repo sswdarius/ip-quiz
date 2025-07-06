@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const questions = [
   {
@@ -104,10 +105,9 @@ export default function TriviaGame() {
   const [nickname, setNickname] = useState('');
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const [answering, setAnswering] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(40);
   const [shuffled, setShuffled] = useState([]);
   const timerRef = useRef(null);
-  const [timeLeft, setTimeLeft] = useState(40);
 
   useEffect(() => {
     if (!started || showResult) return;
@@ -126,9 +126,6 @@ export default function TriviaGame() {
   }, [current, showResult, started]);
 
   const handleAnswer = (answer) => {
-    if (answering) return;
-    setAnswering(true);
-
     clearInterval(timerRef.current);
     const question = shuffled[current];
     if (!question) return;
@@ -136,33 +133,22 @@ export default function TriviaGame() {
     if (correct) setScore(s => s + 1);
     setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
     const next = current + 1;
-
-    setTimeout(() => {
-      if (next < shuffled.length) setCurrent(next);
-      else setShowResult(true);
-      setAnswering(false);
-    }, 200);
+    if (next < shuffled.length) setCurrent(next);
+    else setShowResult(true);
   };
 
   const startGame = () => {
-    const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
-    setShuffled(shuffledQuestions);
+    setShuffled([...questions].sort(() => Math.random() - 0.5));
     setStarted(true);
     setCurrent(0);
     setScore(0);
     setAnswers([]);
     setShowResult(false);
-    setAnswering(false);
   };
 
-  const baseUrl = 'https://ip-quiz.vercel.app'; // sonu. /
-const path = 'api/og'; // başında / yok
-const shareUrl = `${baseUrl}/${path}?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
-const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the Quick IP Quiz! My title: ${getTitle(score)}.`;  // Burada değişiklik yap
-const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-
-
-
+  const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the IP Lawsuit Trivia! My title: ${getTitle(score)}. Can you beat me?`;
+  const shareUrl = `http://localhost:3000/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
+  const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-purple-700 via-indigo-700 to-blue-700 p-6">
@@ -184,28 +170,36 @@ const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURICompo
             </button>
           </>
         ) : !showResult && shuffled[current] ? (
-          <>
-            <h1 className="text-3xl font-extrabold mb-4 text-gray-900 tracking-tight">Quick IP Quiz</h1>
-            <p className="text-lg mb-6 text-gray-700 max-w-lg mx-auto">{shuffled[current].prompt}</p>
-            <div className="flex justify-center space-x-6 mb-6">
-              <button
-                disabled={answering}
-                onClick={() => handleAnswer(true)}
-                className="px-8 py-3 bg-green-600 hover:bg-green-700 rounded-full text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-green-300"
-              >
-                Yes
-              </button>
-              <button
-                disabled={answering}
-                onClick={() => handleAnswer(false)}
-                className="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-red-300"
-              >
-                No
-              </button>
-            </div>
-            <p className="text-sm text-gray-500">Question {current + 1} of {shuffled.length}</p>
-            <p className="mt-2 text-sm font-semibold text-indigo-600">Time left: {timeLeft} seconds</p>
-          </>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h1 className="text-3xl font-extrabold mb-4 text-gray-900 tracking-tight">IP Lawsuit Trivia</h1>
+              <p className="text-lg mb-6 text-gray-700 max-w-lg mx-auto">{shuffled[current].prompt}</p>
+              <div className="flex justify-center space-x-6 mb-6">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleAnswer(true)}
+                  className="px-8 py-3 bg-green-600 hover:bg-green-700 active:scale-95 transition rounded-full text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-green-300"
+                >
+                  Yes
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleAnswer(false)}
+                  className="px-8 py-3 bg-red-600 hover:bg-red-700 active:scale-95 transition rounded-full text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-red-300"
+                >
+                  No
+                </motion.button>
+              </div>
+              <p className="text-sm text-gray-500">Question {current + 1} of {shuffled.length}</p>
+              <p className="mt-2 text-sm font-semibold text-indigo-600">Time left: {timeLeft} seconds</p>
+            </motion.div>
+          </AnimatePresence>
         ) : (
           <>
             <h2 className="text-4xl font-extrabold mb-2 text-gray-900">You scored {score} / {shuffled.length}</h2>
@@ -215,12 +209,12 @@ const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURICompo
               href={twitterShareLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mb-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-semibold shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
+              className="inline-block mb-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 transition rounded-lg text-white font-semibold shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300"
             >
               Share on X
             </a>
             <div className="text-left max-h-48 overflow-y-auto space-y-3 px-4">
-              {answers.slice(0, shuffled.length).map((a, i) => (
+              {answers.map((a, i) => (
                 <div
                   key={i}
                   className={`p-3 rounded-lg ${a.correct ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'} shadow`}
@@ -239,7 +233,7 @@ const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURICompo
             </div>
             <button
               onClick={startGame}
-              className="mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-full text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-300 block mx-auto"
+              className="mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 transition rounded-full text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-300 block mx-auto"
             >
               Restart
             </button>
@@ -247,9 +241,12 @@ const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURICompo
         )}
       </div>
 
-    <div
-  className="mt-6 text-center text-sm text-gray-600 cursor-pointer hover:text-blue-600 transition select-none"
-  onClick={() => window.open('https://x.com/abigrafikvarmi', '_blank')}
->
-  {nickname || 'dsad'}
-</div>
+      <div
+        className="mt-6 text-center text-sm text-gray-600 cursor-pointer hover:text-blue-600 transition select-none"
+        onClick={() => window.open('https://x.com/abigrafikvarmi', '_blank')}
+      >
+        dsad
+      </div>
+    </div>
+  );
+}
