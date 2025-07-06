@@ -125,17 +125,27 @@ export default function TriviaGame() {
     return () => clearInterval(timerRef.current);
   }, [current, showResult, started]);
 
-  const handleAnswer = (answer) => {
-    clearInterval(timerRef.current);
-    const question = shuffled[current];
-    if (!question) return;
-    const correct = question.isTrue === answer;
-    if (correct) setScore(s => s + 1);
-    setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
-    const next = current + 1;
+ const [answering, setAnswering] = useState(false);
+
+const handleAnswer = (answer) => {
+  if (answering) return; // Eğer zaten cevap veriliyorsa işlem yapma
+  setAnswering(true);
+
+  clearInterval(timerRef.current);
+  const question = shuffled[current];
+  if (!question) return;
+  const correct = question.isTrue === answer;
+  if (correct) setScore(s => s + 1);
+  setAnswers(a => [...a, { correct, explanation: question.explanation, source: question.source }]);
+  const next = current + 1;
+
+  setTimeout(() => {
     if (next < shuffled.length) setCurrent(next);
     else setShowResult(true);
-  };
+    setAnswering(false);
+  }, 200); // 200ms bekle yeni soruya geç
+
+};
 
  const startGame = () => {
   const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
