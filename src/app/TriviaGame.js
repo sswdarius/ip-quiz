@@ -105,20 +105,20 @@ export default function TriviaGame() {
   const [nickname, setNickname] = useState('');
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(40);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [shuffled, setShuffled] = useState([]);
   const timerRef = useRef(null);
 
   useEffect(() => {
   if (!started || showResult) return;
 
-  setTimeLeft(15);
+  setTimeLeft(30);
   timerRef.current = setInterval(() => {
     setTimeLeft(prev => {
       if (prev === 1) {
         clearInterval(timerRef.current);
         handleAnswer(false);
-        return 15;
+        return 30;
       }
       return prev - 1;
     });
@@ -149,7 +149,7 @@ export default function TriviaGame() {
   };
 
   const shareText = `${nickname || 'I'} just scored ${score}/${shuffled.length} on the IP Lawsuit Trivia! My title: ${getTitle(score)}. Can you beat me?`;
-  const shareUrl = `http://localhost:3000/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
+  const shareUrl = `https://story-ip-quiz.vercel.app/api/og?score=${score}&title=${encodeURIComponent(getTitle(score))}&nickname=${encodeURIComponent(nickname || 'Player')}`;
   const twitterShareLink = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
 
   return (

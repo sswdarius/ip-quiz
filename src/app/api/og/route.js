@@ -28,7 +28,7 @@ export async function GET(request) {
           boxSizing: 'border-box',
         }}
       >
-        <div>{nickname}&apos;s IP Quiz Result</div>
+        <div>{`${nickname}’s IP Quiz Result`}</div>
         <div style={{ fontSize: 72, marginTop: 20 }}>{score} Points</div>
         <div style={{ fontSize: 48, marginTop: 20 }}>{title}</div>
       </div>
