@@ -108,14 +108,12 @@ export default function TriviaGame() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [shuffled, setShuffled] = useState([]);
   const timerRef = useRef(null);
-
-  // Cevap verildi mi kontrolü için ref
   const answerGivenRef = useRef(false);
 
   const handleAnswer = useCallback((answer) => {
-    if (answerGivenRef.current) return; // Aynı soruya tekrar cevap verilmesini engelle
+    if (answerGivenRef.current) return;
 
-    answerGivenRef.current = true; // Cevap verildi olarak işaretle
+    answerGivenRef.current = true;
     clearInterval(timerRef.current);
     timerRef.current = null;
 
@@ -134,16 +132,15 @@ export default function TriviaGame() {
   useEffect(() => {
     if (!started || showResult) return;
 
-    // Yeni soruya geçildiğinde flag sıfırlanır
-    answerGivenRef.current = false;
-
     setTimeLeft(30);
+    answerGivenRef.current = false; // Yeni soru geldiğinde cevap verilebilir hale getir
+
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
         if (prev === 1) {
           clearInterval(timerRef.current);
           timerRef.current = null;
-          handleAnswer(false); // Süre bitince otomatik yanlış cevap ver
+          handleAnswer(false); // Süre bitti, otomatik "No" cevabı ver
           return 30;
         }
         return prev - 1;
